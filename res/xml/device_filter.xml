@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- vendor and product ID for PNF USB Device -->        
+    <usb-device vendor-id="6952" product-id="17946" />
+    <usb-device vendor-id="6952" product-id="17948" />
+</resources>
