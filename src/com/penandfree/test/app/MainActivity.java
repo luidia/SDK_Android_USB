@@ -31,8 +31,7 @@ public class MainActivity extends Activity {
 	
 	final int ALERTVIEW_CHANGE_LEFT_DEVICE_TAG    = 10;
 	final int ALERTVIEW_CHANGE_RIGHT_DEVICE_TAG   = 11;
-	final int ALERTVIEW_DEVICE_LISTENING   = 12;
-	final int ALERTVIEW_EXIT_TAG   = 13;
+	final int ALERTVIEW_EXIT_TAG   = 12;
 	
 	boolean m_penConntectedStatus;
     int temperatureCnt;
@@ -53,7 +52,9 @@ public class MainActivity extends Activity {
 	Button leftDeviceBtn;
 	Button rightDeviceBtn;
 	TextView debugTextView;
+	
 	boolean isStopPen = false;
+	boolean isHasFocus = false;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +115,11 @@ public class MainActivity extends Activity {
 		finish();
 		super.onDestroy();
 	}
+    
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+		isHasFocus = hasFocus;
+    }
     
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -282,7 +288,7 @@ public class MainActivity extends Activity {
 				penState = 0;
 				
 				addDebugText("FAIL_LISTENING");
-				MessageBox("abnormal connect. please reconnect device" ,"»Æ¿Œ" ,null ,ALERTVIEW_DEVICE_LISTENING);
+				Toast.makeText(MainActivity.this ,"abnormal connect. please reconnect device", Toast.LENGTH_SHORT).show();
 				break;
 			case PNFPenEvent.PNF_USB_EVENT_ERROR:
 				penErrorCnt++;
@@ -316,32 +322,34 @@ public class MainActivity extends Activity {
 	
 	void MessageBox(final String _sContent, final String _sPositiveBtText, final String _sNegativeBtText ,final int alertTag)
 	{
+		if(!isHasFocus) return;
+
 		AlertDialog.Builder mAlertBox =  new AlertDialog.Builder(this);;
 		mAlertBox.setMessage(_sContent);	
-		
+
 		if(!IsEmpty(_sPositiveBtText))
-    	{
+		{
 			mAlertBox.setPositiveButton(_sPositiveBtText, new OnClickListener() 
-										{
-											@Override
-											public void onClick(DialogInterface dialog, int which) 
-											{
-												if(alertTag == ALERTVIEW_EXIT_TAG){
-													System.exit(0);
-												}
-											}
-										});
-    	}
-		
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int which) 
+				{
+					if(alertTag == ALERTVIEW_EXIT_TAG){
+						System.exit(0);
+					}
+				}
+			});
+		}
+
 		if(!IsEmpty(_sNegativeBtText))
 		{
 			mAlertBox.setNegativeButton(_sNegativeBtText, new OnClickListener() 
-										{
-											@Override
-											public void onClick(DialogInterface dialog, int which) 
-											{													
-											}
-										});
+			{
+				@Override
+				public void onClick(DialogInterface dialog, int which) 
+				{													
+				}
+			});
 		}
 
 		mAlertBox.show();		
